@@ -1,0 +1,1 @@
+add_executable(bitonic_test bitonic_test.cpp)

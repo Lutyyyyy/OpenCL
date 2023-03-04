@@ -1,0 +1,1 @@
+/usr/bin/clang++ CMakeFiles/bitonic_test.dir/bitonic_test.cpp.o -o bitonic_test  /usr/lib/x86_64-linux-gnu/libgtest.a /usr/lib/x86_64-linux-gnu/libgtest_main.a -lpthread ../../source/bitonic_sort/libbitonic_sort.a /usr/lib/x86_64-linux-gnu/libgtest.a 

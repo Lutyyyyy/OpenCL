@@ -1,0 +1,1 @@
+/usr/bin/clang++ CMakeFiles/bitonic_run.dir/bitonic_run.cpp.o -o bitonic_run  ../../source/bitonic_sort/libbitonic_sort.a 
