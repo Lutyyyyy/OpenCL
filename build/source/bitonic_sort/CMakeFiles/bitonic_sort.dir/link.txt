@@ -1,2 +1,0 @@
-/usr/bin/ar qc libbitonic_sort.a CMakeFiles/bitonic_sort.dir/bitonic_sort.cpp.o
-/usr/bin/ranlib libbitonic_sort.a
