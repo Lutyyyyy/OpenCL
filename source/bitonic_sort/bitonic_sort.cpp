@@ -5,6 +5,7 @@
 int out();
 
 int out () {
+    
     std::cout << "BEBRA" << std::endl;
     return 0;
 }

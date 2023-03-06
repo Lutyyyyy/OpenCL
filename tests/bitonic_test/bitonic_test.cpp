@@ -1,7 +1,7 @@
 #include <vector>
 #include <algorithm>
 
-//#include "input.hpp"
+#include "OpenCL_app.hpp"
 #include "gtest/gtest.h"
 
 
