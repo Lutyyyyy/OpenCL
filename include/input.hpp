@@ -40,18 +40,31 @@ T get_val() {
     return value;
 }
 
-void generate_data(const char* filepath, unsigned long long size) {
-    
-    std::mt19937 gen(rand());
-    std::uniform_real_distribution<float> dis(-100000.0, 100000.0);
-    
-    std::fstream input(filepath);
-    for (int i = 0; i < size; ++i) {
-        input << dis(gen) << ' ';
+template<typename T>
+std::vector<T> get_data() {
+    size_t size = get_val<size_t>();
+    std::vector<T> data_vector(size);
+    for (size_t i = 0; i < size; ++i) {
+        data_vector[i] = get_val<T>();
     }
-    input << '\n';
+    
+    return data_vector;
+}
 
-    input.close();
+template<typename T>
+std::vector<T> get_data_from_file(const char* filepath) {
+    std::ifstream stream(filepath);
+    size_t size = 0;
+    stream >> size;
+    std::vector<T> data_vector(size);
+    for (size_t i = 0; i < size; ++i) {
+        stream >> data_vector[i];
+    }
+    for (size_t i = 0; i < size; ++i) {
+        std::cout << data_vector[i] << std::endl;
+    }
+    stream.close();
+    return data_vector;
 }
 
 } // input

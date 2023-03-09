@@ -1,54 +1,83 @@
 #include <vector>
 #include <algorithm>
 
-#include "OpenCL_app.hpp"
+#include "input.hpp"
+#include "Bitonic_app.hpp"
 #include "gtest/gtest.h"
+#include "test_generator.hpp"
 
+#define BITONIC_PATH "../../../kernels/bitonic_sort.cl"
+#define DEFAULT_SIZE 65536
 
-namespace OpenCL
-{
 namespace testing
 {
 
 TEST(correctness, Test1)
 {
-    //sort test1.dat + compare with std::sort
-    EXPECT_EQ (0, false);   
+    std::vector<float> vector = generate_random_sequence(DEFAULT_SIZE);
+    opencl::Bitonic_app app{BITONIC_PATH};
+    app.bitonic_sort(vector);
+    EXPECT_EQ (std::is_sorted(vector.begin(), vector.end()), true);   
 }
 
 TEST(correctness, Test2)
 {
-    //sort test2.dat + compare with std::sort  
-    EXPECT_EQ (0, false);
+    std::vector<float> vector = generate_ascending_sequence(DEFAULT_SIZE);
+    opencl::Bitonic_app app{BITONIC_PATH};
+    app.bitonic_sort(vector);
+    EXPECT_EQ (std::is_sorted(vector.begin(), vector.end()), true);  
 }
 
 TEST(correctness, Test3)
 {
-    //sort test3.dat + compare with std::sort  
-    EXPECT_EQ (0, false);   
+    std::vector<float> vector = generate_descending_sequence(DEFAULT_SIZE);
+    opencl::Bitonic_app app{BITONIC_PATH};
+    app.bitonic_sort(vector);
+    EXPECT_EQ (std::is_sorted(vector.begin(), vector.end()), true);  
 }
 
 TEST(correctness, Test4)
 {
-    //sort test4.dat + compare with std::sort  
-    EXPECT_EQ (0, false);  
+    std::vector<float> vector = generate_bitonic_sequence(DEFAULT_SIZE);
+    opencl::Bitonic_app app{BITONIC_PATH};
+    app.bitonic_sort(vector);
+    EXPECT_EQ (std::is_sorted(vector.begin(), vector.end()), true);  
 }
 
 TEST(correctness, Test5)
 {
-    //sort test5.dat + compare with std::sort  
-    EXPECT_EQ (0, false);
+    std::vector<float> vector(DEFAULT_SIZE, 1.0);
+    opencl::Bitonic_app app{BITONIC_PATH};
+    app.bitonic_sort(vector);
+    EXPECT_EQ (std::is_sorted(vector.begin(), vector.end()), true);  
 }
 
 TEST(correctness, Test6)
 {
-    //sort test6.dat + compare with std::sort  
-    EXPECT_EQ (0, false);
+    std::vector<float> vector = generate_random_sequence(50);
+    opencl::Bitonic_app app{BITONIC_PATH};
+    app.bitonic_sort(vector);
+    EXPECT_EQ (std::is_sorted(vector.begin(), vector.end()), true);  
+}
+
+TEST(correctness, Test7)
+{
+    std::vector<float> vector = {1};
+    opencl::Bitonic_app app{BITONIC_PATH};
+    app.bitonic_sort(vector);
+    EXPECT_EQ (std::is_sorted(vector.begin(), vector.end()), true);  
+}
+
+TEST(correctness, Test8)
+{
+    std::vector<float> vector;
+    opencl::Bitonic_app app{BITONIC_PATH};
+    app.bitonic_sort(vector);
+    EXPECT_EQ (std::is_sorted(vector.begin(), vector.end()), true);  
 }
 
 } //testing
 
-} //OpenCL
 
 int main (int argc, char** argv)
 {
