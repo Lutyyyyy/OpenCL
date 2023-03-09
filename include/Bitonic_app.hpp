@@ -1,5 +1,7 @@
 #pragma once
 
+#define CL_HPP_TARGET_OPENCL_VERSION 210
+
 #include <cmath>
 #include <fstream>
 #include <iostream>
@@ -8,8 +10,6 @@
 
 #include "CL/opencl.hpp"
 #define __CL_ENABLE_EXCEPTIONS
-
-#define LOG_PATH       "../"
 
 #define DIRECTION 0 /*Ascending: 0; descending: -1*/
 
