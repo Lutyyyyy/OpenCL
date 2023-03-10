@@ -37,14 +37,17 @@ private:
     cl::Program program_;
    
 public:
-    //delete asignment and other constructors
-    
     OpenCL_app(const char* filepath) : platform_{select_platform()}, 
                                         context_{get_gpu_context(platform_())}, 
                                         device_{select_device()},
                                         queue_{context_, device_, cl::QueueProperties::Profiling | cl::QueueProperties::OutOfOrder},
                                         kernel_source_{create_kernel_source(filepath)},
                                         program_{build_program()} {}
+    
+    OpenCL_app(OpenCL_app&&) = delete;
+    OpenCL_app &operator=(OpenCL_app&&) = delete;
+    OpenCL_app(const OpenCL_app&) = delete;
+    OpenCL_app &operator=(const OpenCL_app&) = delete;
     
     static cl::Platform select_platform();
     static cl::Context get_gpu_context(cl_platform_id);

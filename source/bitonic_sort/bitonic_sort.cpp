@@ -82,13 +82,7 @@ void opencl::OpenCL_app::bitonic_sort(std::vector<float>& data_vec) {
     if (data_vec.size() == 0) return;
 
     cl::vector<cl::Kernel> kernels = get_program_kernels();
-/*
-    cl::Kernel kernel_init(program_, BSORT_INIT);
-    cl::Kernel kernel_stage_0(program_, BSORT_STAGE_0);
-    cl::Kernel kernel_stage_n(program_, BSORT_STAGE_N);
-    cl::Kernel kernel_merge(program_, BSORT_MERGE);
-    cl::Kernel kernel_merge_last(program_, BSORT_MERGE_LAST);
-*/
+    
     cl::Kernel& kernel_init = kernels[0];
     cl::Kernel& kernel_stage_0 = kernels[1];
     cl::Kernel& kernel_stage_n = kernels[2];
