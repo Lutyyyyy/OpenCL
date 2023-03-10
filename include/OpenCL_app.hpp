@@ -18,14 +18,14 @@
 #endif
 
 #ifndef CHECK_ENABLED 
-#define CHECK_ENABLED 0
+#define CHECK_ENABLED 1
 #endif
 
 
 namespace opencl
 {
 
-class Bitonic_app {
+class OpenCL_app final {
 
 private:
     cl::Platform platform_;
@@ -34,20 +34,26 @@ private:
     cl::CommandQueue queue_;
 
     std::string kernel_source_;
+    cl::Program program_;
    
 public:
+    //delete asignment and other constructors
     
-    Bitonic_app(const char* filepath) : platform_{select_platform()}, 
+    OpenCL_app(const char* filepath) : platform_{select_platform()}, 
                                         context_{get_gpu_context(platform_())}, 
                                         device_{select_device()},
                                         queue_{context_, device_, cl::QueueProperties::Profiling | cl::QueueProperties::OutOfOrder},
-                                        kernel_source_{create_kernel_source(filepath)} {}
+                                        kernel_source_{create_kernel_source(filepath)},
+                                        program_{build_program()} {}
     
     static cl::Platform select_platform();
     static cl::Context get_gpu_context(cl_platform_id);
     static std::string create_kernel_source(const char * filepath);
-    cl::Device select_device();
     
+    cl::Device select_device();
+    cl::Program build_program();
+    cl::vector<cl::Kernel> get_program_kernels();
+
     size_t get_work_group_size (cl::Kernel& kernel);
     cl_ulong event_duration (cl::Event& e);  
 

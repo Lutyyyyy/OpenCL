@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "Bitonic_app.hpp"
+#include "OpenCL_app.hpp"
 
 #define BSORT_INIT         "bsort_init"
 #define BSORT_STAGE_0      "bsort_stage_0"
@@ -9,7 +9,7 @@
 #define BSORT_MERGE_LAST   "bsort_merge_last"
 
 
-cl::Platform opencl::Bitonic_app::select_platform() {
+cl::Platform opencl::OpenCL_app::select_platform() {
     cl::vector<cl::Platform> platforms;
     cl::Platform::get(&platforms);
     for (auto p : platforms) {
@@ -21,7 +21,7 @@ cl::Platform opencl::Bitonic_app::select_platform() {
     throw std::runtime_error("No platform selected");
 }
 
-cl::Context opencl::Bitonic_app::get_gpu_context(cl_platform_id PId) {
+cl::Context opencl::OpenCL_app::get_gpu_context(cl_platform_id PId) {
     cl_context_properties properties[] = {
         CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties>(PId),
         0 // signals end of property list
@@ -30,7 +30,7 @@ cl::Context opencl::Bitonic_app::get_gpu_context(cl_platform_id PId) {
     return cl::Context(CL_DEVICE_TYPE_GPU, properties);
 }
 
-std::string opencl::Bitonic_app::create_kernel_source(const char *filepath) {
+std::string opencl::OpenCL_app::create_kernel_source(const char *filepath) {
     std::string source;
     std::ifstream kernel_file;
     kernel_file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -42,12 +42,22 @@ std::string opencl::Bitonic_app::create_kernel_source(const char *filepath) {
     return source;
 }
 
-cl::Device opencl::Bitonic_app::select_device() {
+cl::Device opencl::OpenCL_app::select_device() {
     std::vector<cl::Device> devices = context_.getInfo<CL_CONTEXT_DEVICES>();
     return devices.front();
 }
 
-void opencl::Bitonic_app::get_info() {
+cl::Program opencl::OpenCL_app::build_program() { 
+    return cl::Program(context_, kernel_source_, true /* build immediately */); 
+}
+
+cl::vector<cl::Kernel> opencl::OpenCL_app::get_program_kernels() {
+    cl::vector<cl::Kernel> kernels;
+    program_.createKernels(&kernels);
+    return kernels;
+}
+
+void opencl::OpenCL_app::get_info() {
     std::cout << "Platform: " << platform_.getInfo<CL_PLATFORM_NAME>() << std::endl;
     auto devices = context_.getInfo<CL_CONTEXT_DEVICES>();
     std::cout << "Devices:\n";
@@ -56,28 +66,34 @@ void opencl::Bitonic_app::get_info() {
     }
 }
 
-size_t opencl::Bitonic_app::get_work_group_size(cl::Kernel& kernel) {
+size_t opencl::OpenCL_app::get_work_group_size(cl::Kernel& kernel) {
     size_t local_size = kernel.getWorkGroupInfo<CL_KERNEL_WORK_GROUP_SIZE>(device_);
     return static_cast<size_t>(std::pow(2, std::trunc(std::log2(local_size))));
 }
 
-cl_ulong opencl::Bitonic_app::event_duration (cl::Event& e) {
+cl_ulong opencl::OpenCL_app::event_duration (cl::Event& e) {
     cl_ulong start = e.getProfilingInfo<CL_PROFILING_COMMAND_START>();
     cl_ulong end = e.getProfilingInfo<CL_PROFILING_COMMAND_END>();
     return end - start;
 }
 
-void opencl::Bitonic_app::bitonic_sort(std::vector<float>& data_vec) {
+void opencl::OpenCL_app::bitonic_sort(std::vector<float>& data_vec) {
 
     if (data_vec.size() == 0) return;
 
-    cl::Program program(context_, kernel_source_, true /* build immediately */);
-
-    cl::Kernel kernel_init(program, BSORT_INIT);
-    cl::Kernel kernel_stage_0(program, BSORT_STAGE_0);
-    cl::Kernel kernel_stage_n(program, BSORT_STAGE_N);
-    cl::Kernel kernel_merge(program, BSORT_MERGE);
-    cl::Kernel kernel_merge_last(program, BSORT_MERGE_LAST);
+    cl::vector<cl::Kernel> kernels = get_program_kernels();
+/*
+    cl::Kernel kernel_init(program_, BSORT_INIT);
+    cl::Kernel kernel_stage_0(program_, BSORT_STAGE_0);
+    cl::Kernel kernel_stage_n(program_, BSORT_STAGE_N);
+    cl::Kernel kernel_merge(program_, BSORT_MERGE);
+    cl::Kernel kernel_merge_last(program_, BSORT_MERGE_LAST);
+*/
+    cl::Kernel& kernel_init = kernels[0];
+    cl::Kernel& kernel_stage_0 = kernels[1];
+    cl::Kernel& kernel_stage_n = kernels[2];
+    cl::Kernel& kernel_merge = kernels[3];
+    cl::Kernel& kernel_merge_last = kernels[4];
 
     size_t l_size = get_work_group_size(kernel_init);
 
@@ -175,7 +191,7 @@ void opencl::Bitonic_app::bitonic_sort(std::vector<float>& data_vec) {
     return;
 }
 
-size_t opencl::Bitonic_app::align_to_power_of_2 (size_t size) {
+size_t opencl::OpenCL_app::align_to_power_of_2 (size_t size) {
     return static_cast<size_t> (std::pow(2, std::ceil(std::log2(size))));
 }
 

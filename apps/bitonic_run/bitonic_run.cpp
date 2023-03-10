@@ -1,22 +1,19 @@
-#include <charconv>
+#include <algorithm>
 #include <chrono>
-#include <cmath>
 #include <iostream>
 #include <stdexcept>
-#include <string>
-#include <string_view>
+#include <fstream>
 
 
 #define COMPARE_CPU 1
 
 
+#include "OpenCL_app.hpp"
 #include "input.hpp"
-#include "Bitonic_app.hpp"
-
 
 int main () try {
 
-    opencl::Bitonic_app app{"../../../kernels/bitonic_sort.cl"};
+    opencl::OpenCL_app app{"../../../kernels/bitonic_sort.cl"};
     app.get_info();
     std::vector<float> vec = input::get_data<float>();
     std::vector<float> vec_copy(vec);
@@ -40,3 +37,4 @@ int main () try {
     std::cerr << e.what() << std::endl; 
     return EXIT_FAILURE;
 }
+
