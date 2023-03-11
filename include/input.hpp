@@ -14,10 +14,6 @@ void handle_input_error() {
     std::cout << "Incorrect input" << std::endl;
     std::cin.clear();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-    if ((std::cin >> std::ws).eof()) {
-        throw std::runtime_error("Input: EOF reached");
-    }
 }
 
 template<typename T> 

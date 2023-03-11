@@ -14,7 +14,7 @@
 int main () try {
 
     opencl::OpenCL_app app{"../../../kernels/bitonic_sort.cl"};
-    //app.get_info();
+    app.get_info();
     size_t size = input::get_val<size_t>();
     std::vector<float> vec = input::get_data(size);
     std::vector<float> vec_copy(vec);
