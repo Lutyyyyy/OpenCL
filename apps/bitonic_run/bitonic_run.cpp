@@ -14,8 +14,9 @@
 int main () try {
 
     opencl::OpenCL_app app{"../../../kernels/bitonic_sort.cl"};
-    app.get_info();
-    std::vector<float> vec = input::get_data<float>();
+    //app.get_info();
+    size_t size = input::get_val<size_t>();
+    std::vector<float> vec = input::get_data(size);
     std::vector<float> vec_copy(vec);
 
     std::chrono::steady_clock::time_point bitonic_begin = std::chrono::steady_clock::now();
@@ -33,8 +34,8 @@ int main () try {
     
     return EXIT_SUCCESS;
 
-} catch (const std::exception &e) {
+} catch (cl::Error &e) {
+        std::cout << "clError: " << e.err() << " " << e.what() << std::endl;
+} catch (std::exception &e) {
     std::cerr << e.what() << std::endl; 
-    return EXIT_FAILURE;
-}
-
+} 

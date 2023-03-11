@@ -1,12 +1,11 @@
 #pragma once
 
+#include <algorithm>
 #include <vector>
 #include <random>
-#include <fstream>
 #include <iostream>
 #include <stdexcept>
 #include <limits>
-
 
 namespace input 
 {
@@ -15,7 +14,7 @@ void handle_input_error() {
     std::cout << "Incorrect input" << std::endl;
     std::cin.clear();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-   
+
     if ((std::cin >> std::ws).eof()) {
         throw std::runtime_error("Input: EOF reached");
     }
@@ -23,16 +22,10 @@ void handle_input_error() {
 
 template<typename T> 
 T get_val() {
-    
     T value;
-
     std::cin >> value;
 
-    if (std::cin.eof()) {
-        throw std::runtime_error("Input: EOF reached");
-    }
-
-    while((!std::cin) || (!std::isspace(std::cin.peek()))) {
+    while (!(std::cin && (std::isspace(std::cin.peek()) || std::cin.eof()))) {
         handle_input_error();
         std::cin >> value;
     }
@@ -40,15 +33,10 @@ T get_val() {
     return value;
 }
 
-template<typename T>
-std::vector<T> get_data() {
-    size_t size = get_val<size_t>();
-    std::vector<T> data_vector(size);
-    for (size_t i = 0; i < size; ++i) {
-        data_vector[i] = get_val<T>();
-    }
-    
-    return data_vector;
+std::vector<float> get_data(size_t size) {
+    std::vector<float> vec(size);
+    std::generate(vec.begin(), vec.end(), []{ return get_val<float>(); });
+    return vec;
 }
 
 } // input

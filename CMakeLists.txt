@@ -2,13 +2,36 @@ cmake_minimum_required (VERSION 3.14)
 
 project(bitonic_sort VERSION 1.0)
 
-find_package(OpenCL REQUIRED)
-
 file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}/CMakeLists.txt" LOC_PATH)
 if(EXISTS "${LOC_PATH}")
 message(FATAL_ERROR "You cannot build in a source directory (or any directory with a CMakeLists.txt file).
 Please make a build subdirectory. Feel free to remove CMakeCache.txt and CMakeFiles.")
 endif()
+
+find_package(OpenCLICDLoader)
+if (NOT OpenCLICDLoader_FOUND)
+    message("If cmake couldn't find OpenCL loader, please set the path to OpenCLICDLoaderConfig.cmake in CMAKE_PREFIX_PATH")
+endif()
+
+find_package(OpenCL REQUIRED)
+find_package(Threads REQUIRED)
+
+set(OPENCL_LIBRARIES OpenCL::OpenCL Threads::Threads)
+
+find_package(OpenCLHeaders)
+if (NOT OpenCLHeaders_FOUND)
+    message("If cmake couldn't find OpenCL header files, please set the path to OpenCLHeadersConfig.cmake in CMAKE_PREFIX_PATH")
+else()
+    set(OPENCL_LIBRARIES ${OPENCL_LIBRARIES} OpenCL::Headers)
+endif()
+
+find_package(OpenCLHeadersCpp)
+if (NOT OpenCLHeadersCpp_FOUND)
+    message("If cmake couldn't find OpenCL C++ header files, please set the path to OpenCLHeadersCppConfig.cmake in CMAKE_PREFIX_PATH")
+else()
+    set(OPENCL_LIBRARIES ${OPENCL_LIBRARIES} OpenCL::HeadersCpp)
+endif()
+
 
 set (
 FLAGS
@@ -18,8 +41,6 @@ FLAGS
 -Werror
 -O2
 )
-
-set(OPENCL_LIBRARIES OpenCL::OpenCL Threads::Threads)
 
 
 add_subdirectory(source)
