@@ -13,15 +13,6 @@
 
 #define DIRECTION 0 /*Ascending: 0; descending: -1*/
 
-#ifndef PROFILING_ENABLED
-#define PROFILING_ENABLED 1
-#endif
-
-#ifndef CHECK_ENABLED 
-#define CHECK_ENABLED 1
-#endif
-
-
 namespace opencl
 {
 
@@ -38,11 +29,11 @@ private:
    
 public:
     OpenCL_app(const char* filepath) : platform_{select_platform()}, 
-                                        context_{get_gpu_context(platform_())}, 
-                                        device_{select_device()},
-                                        queue_{context_, device_, cl::QueueProperties::Profiling | cl::QueueProperties::OutOfOrder},
-                                        kernel_source_{create_kernel_source(filepath)},
-                                        program_{build_program()} {}
+                                       context_{get_gpu_context(platform_())}, 
+                                       device_{select_device()},
+                                       queue_{context_, device_, cl::QueueProperties::Profiling | cl::QueueProperties::OutOfOrder},
+                                       kernel_source_{create_kernel_source(filepath)},
+                                       program_{build_program()} {}
     
     OpenCL_app(OpenCL_app&&) = delete;
     OpenCL_app &operator=(OpenCL_app&&) = delete;
@@ -63,7 +54,7 @@ public:
     void get_info(); 
 
 //bitonic_sort functions 
-    void bitonic_sort(std::vector<float>& data_vec);
+    size_t bitonic_sort(std::vector<float>& data_vec);
     size_t align_to_power_of_2 (size_t size); 
 };
 

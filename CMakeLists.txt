@@ -42,6 +42,7 @@ FLAGS
 -O2
 )
 
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/kernels DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(source)
 

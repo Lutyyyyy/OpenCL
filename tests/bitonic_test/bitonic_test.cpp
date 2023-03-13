@@ -6,7 +6,7 @@
 #include "gtest/gtest.h"
 #include "test_generator.hpp"
 
-#define BITONIC_PATH "../../../kernels/bitonic_sort.cl"
+#define BITONIC_PATH "../../kernels/bitonic_sort.cl"
 #define DEFAULT_SIZE 65536
 
 namespace testing

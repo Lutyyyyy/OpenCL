@@ -77,9 +77,9 @@ cl_ulong opencl::OpenCL_app::event_duration (cl::Event& e) {
     return end - start;
 }
 
-void opencl::OpenCL_app::bitonic_sort(std::vector<float>& data_vec) {
+size_t opencl::OpenCL_app::bitonic_sort(std::vector<float>& data_vec) {
 
-    if (data_vec.size() == 0) return;
+    if (data_vec.size() == 0) return 0;
 
     cl::vector<cl::Kernel> kernels = get_program_kernels();
     
@@ -162,27 +162,7 @@ void opencl::OpenCL_app::bitonic_sort(std::vector<float>& data_vec) {
     cl::copy(queue_, data_buffer, data_vec.begin(), data_vec.end());
     data_vec.resize(initial_size);
 
-    if (CHECK_ENABLED) {
-        std::ofstream log_file;
-        log_file.open ("log.txt", std::ios::trunc);
-        size_t errors = 0;
-        for (size_t i = 0; i < data_vec.size() - 1; ++i) {
-            if (data_vec[i] > data_vec[i+1]) {
-                errors++;
-                log_file << "sorted[" << i << "] > sorted[" << i + 1 << "] \t (" << data_vec[i] << " > " << data_vec[i+1] << ")\n"; 
-            }
-        }
-
-        if (errors) { std::cout << errors << " errors occured. Check log.txt for futher information.\n"; }
-        else { std::cout << "GPU sorted correctly\n\n"; }
-        log_file.close();
-    }
-
-    if (PROFILING_ENABLED) {
-        std::cout << "GPU pure time: " << static_cast<unsigned long> (time_used) / 1e6 /*ns -> ms*/ << " [ms]" << std::endl;
-    }
-
-    return;
+    return time_used;
 }
 
 size_t opencl::OpenCL_app::align_to_power_of_2 (size_t size) {
