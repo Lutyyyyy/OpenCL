@@ -11,5 +11,3 @@ Prerequisites:
 2. `cd build`
 3. run `cmake .. `
 4. run `make` or `cmake --build`
-
-After following this simple set of instructions all apps are now in `build/apps` in each separate directory. All unit tests are in `build/tests`. 
