@@ -73,7 +73,7 @@ int main () try {
     LOG("Bitonic sort ended\nSorted vector info:")
     LOG_VECTOR_INFO(vec_copy)
 
-    for (int i = 0; i < vec_copy.size(); ++i) {
+    for (size_t i = 0; i < vec_copy.size(); ++i) {
         std::cout << vec_copy[i] << ' ';
     }
     std::cout << std::endl;
