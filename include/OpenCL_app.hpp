@@ -12,6 +12,7 @@
 #include "CL/opencl.hpp"
 
 #define DIRECTION 0 /*Ascending: 0; descending: -1*/
+#define BITONIC_PATH "kernels/bitonic_sort.cl"
 
 namespace opencl
 {
@@ -28,7 +29,7 @@ private:
     cl::Program program_;
    
 public:
-    OpenCL_app(const char* filepath) : platform_{select_platform()}, 
+    OpenCL_app(const char* filepath = BITONIC_PATH) : platform_{select_platform()}, 
                                        context_{get_gpu_context(platform_())}, 
                                        device_{select_device()},
                                        queue_{context_, device_, cl::QueueProperties::Profiling | cl::QueueProperties::OutOfOrder},

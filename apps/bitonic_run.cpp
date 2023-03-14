@@ -52,7 +52,7 @@
 
 int main () try {
 
-    opencl::OpenCL_app app{"kernels/bitonic_sort.cl"};
+    opencl::OpenCL_app app{};
     LOG("app successfully created")
     app.get_info();
 
