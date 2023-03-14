@@ -52,7 +52,7 @@
 
 int main () try {
 
-    opencl::OpenCL_app app{"../../kernels/bitonic_sort.cl"};
+    opencl::OpenCL_app app{"kernels/bitonic_sort.cl"};
     LOG("app successfully created")
     app.get_info();
 
@@ -66,7 +66,6 @@ int main () try {
     }
 
     std::vector<float> vec_copy(vec);
-
     LOG("Bitonic sort started")
     std::chrono::steady_clock::time_point bitonic_begin = std::chrono::steady_clock::now();
     size_t gpu_time = app.bitonic_sort(vec_copy);

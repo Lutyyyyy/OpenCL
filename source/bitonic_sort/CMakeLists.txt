@@ -1,1 +1,0 @@
-add_library(bitonic_sort bitonic_sort.cpp)

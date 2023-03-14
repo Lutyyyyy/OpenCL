@@ -44,133 +44,28 @@ FLAGS
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/kernels DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
-add_subdirectory(source)
+add_compile_options(${FLAGS})
 
-message (STATUS "\n////////////////")
-message (STATUS "Collected LIBS:")
-foreach(LIB ${LIBS})
-    message (STATUS "   ${LIB}")
-endforeach()
-message (STATUS "")
+#libs
+add_library(bitonic_sort source/bitonic_sort.cpp)
+target_include_directories(bitonic_sort PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${OPENCL_INCLUDE_DIR})
+target_link_libraries(bitonic_sort PRIVATE ${OPENCL_LIBRARIES})
+target_compile_features(bitonic_sort PRIVATE cxx_std_20)
 
-foreach(LIB ${LIBS})
-    message (STATUS "lib: ${LIB}")
+#apps
+add_executable (bitonic_run apps/bitonic_run.cpp)
+target_include_directories(bitonic_run PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${OPENCL_INCLUDE_DIR})
+target_link_libraries(bitonic_run PRIVATE ${OPENCL_LIBRARIES})
+target_link_libraries(bitonic_run PRIVATE bitonic_sort)
+target_compile_features(bitonic_run PRIVATE cxx_std_20)
 
-    target_compile_features(${LIB} PRIVATE cxx_std_20)
-
-    target_link_options(${LIB} PRIVATE "${FLAGS}")
-    target_compile_options(${LIB} PRIVATE "${FLAGS}")
-
-    target_include_directories(${LIB} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-    target_include_directories(${LIB} PUBLIC ${OPENCL_INCLUDE_DIR})
-
-    get_property(dirs TARGET ${LIB} PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
-    foreach(dir ${dirs})
-        message(STATUS "    ${LIB} includes dir = '${dir}'")    
-    endforeach()
-    message (STATUS "")
-endforeach()
-
-
-foreach(LIB ${LIBS})
-    foreach(LIB_TO_LINK ${LIBS})
-        if (NOT ${LIB} STREQUAL ${LIB_TO_LINK})
-            target_link_libraries(${LIB} PRIVATE ${LIB_TO_LINK})
-            endif()
-    endforeach()
-
-    target_link_libraries(${LIB} ${OPENCL_LIBRARIES})
-
-    get_target_property(OUT ${LIB} LINK_LIBRARIES)
-    
-    message(STATUS "TO LIB: ${LIB}")
-
-    foreach(LIB_MESSAGE ${OUT})
-        message(STATUS "    linked: ${LIB_MESSAGE}")
-    endforeach()
-    message(STATUS "")        
-endforeach()
-
-
+#tests
 enable_testing()
 find_package (GTest REQUIRED)
 
-
-add_subdirectory(tests)
-
-message (STATUS "\n////////////////")
-message (STATUS "Collected TESTS:")
-foreach(TEST ${TESTS})
-message (STATUS "   ${TEST}")
-endforeach()
-message (STATUS "")
-
-
-foreach (TEST ${TESTS})
-    message (STATUS "tests: ${TEST}")
-
-    target_compile_features(${TEST} PRIVATE cxx_std_20)
-
-    target_link_options(${TEST} PRIVATE "${FLAGS}")
-    target_compile_options(${TEST} PRIVATE "${FLAGS}")
-
-    target_include_directories(${TEST} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-    target_link_libraries (${TEST} PRIVATE ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} pthread)
-    target_link_libraries (${TEST} PRIVATE ${LIBS})
-    
-    target_include_directories(${TEST} PUBLIC ${OPENCL_INCLUDE_DIR})
-    target_link_libraries(${TEST} PRIVATE ${OPENCL_LIBRARIES})
-
-    get_target_property(OUT ${TEST} LINK_LIBRARIES)
-    get_target_property(OUT_OPTIONS ${TEST} LINK_OPTIONS)
-    
-    foreach(OUT_OPTION ${OUT_OPTIONS})
-    message (STATUS "     linked option: ${OUT_OPTION}")
-    endforeach()
-    
-    foreach(LIB ${OUT})
-    message(STATUS "    linked: ${LIB}")
-    endforeach()
-    
-    message(STATUS "")
-    
-endforeach ()
-
-add_subdirectory(apps)
-message (STATUS "\n////////////////")
-message (STATUS "Collected APPS: ${APPS}")
-    
-foreach(APP ${APPS})
-    message (STATUS "app: ${APP}")
-
-    target_compile_features(${APP} PRIVATE cxx_std_20)
-
-    target_link_options(${APP} PRIVATE "${FLAGS}")
-    target_compile_options(${APP} PRIVATE "${FLAGS}")
-
-    target_include_directories(${APP} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-    target_link_libraries(${APP} PRIVATE ${LIBS})
-    
-    target_include_directories(${APP} PUBLIC ${OPENCL_INCLUDE_DIR})
-    target_link_libraries(${APP} PRIVATE ${OPENCL_LIBRARIES})
-    
-    get_property(dirs TARGET ${APP} PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
-    foreach(dir ${dirs})
-        message(STATUS "    ${APP} includes dir = '${dir}'")    
-    endforeach()
-
-    get_target_property(OUT ${APP} LINK_LIBRARIES)
-    get_target_property(OUT_OPTIONS ${APP} LINK_OPTIONS)
-    
-    foreach(OUT_OPTION ${OUT_OPTIONS})
-    message (STATUS "     linked option: ${OUT_OPTION}")
-    endforeach()
-    
-    foreach(LIB ${OUT})
-        message(STATUS "    linked: ${LIB}")
-    endforeach()
-
-    message (STATUS "")
-endforeach()
- 
-#///////////////////////////////////////////////////////////////////////////////////////
+add_executable(bitonic_test tests/bitonic_test.cpp)
+target_include_directories(bitonic_test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${OPENCL_INCLUDE_DIR})
+target_link_libraries (bitonic_test PRIVATE ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} pthread)
+target_link_libraries(bitonic_test PRIVATE ${OPENCL_LIBRARIES})
+target_link_libraries(bitonic_test PRIVATE bitonic_sort)
+target_compile_features(bitonic_test PRIVATE cxx_std_20)

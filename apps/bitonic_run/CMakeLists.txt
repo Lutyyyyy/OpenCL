@@ -1,1 +1,0 @@
-add_executable (bitonic_run bitonic_run.cpp)
