@@ -4,6 +4,7 @@
 #define CL_HPP_ENABLE_EXCEPTIONS
 
 #include <cmath>
+#include <chrono>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -11,35 +12,30 @@
 
 #include "CL/opencl.hpp"
 
-#define DIRECTION 0 /*Ascending: 0; descending: -1*/
-#define BITONIC_PATH "kernels/bitonic_sort.cl"
-
 namespace opencl
 {
 
-class OpenCL_app final {
+enum class Direction { ASCENDING = 0, DESCENDING = 1 };
+
+class Bsort_app final {
 
 private:
     cl::Platform platform_;
     cl::Context context_;
     cl::Device device_;
     cl::CommandQueue queue_;
-
     std::string kernel_source_;
     cl::Program program_;
    
 public:
-    OpenCL_app(const char* filepath = BITONIC_PATH) : platform_{select_platform()}, 
-                                       context_{get_gpu_context(platform_())}, 
-                                       device_{select_device()},
-                                       queue_{context_, device_, cl::QueueProperties::Profiling | cl::QueueProperties::OutOfOrder},
-                                       kernel_source_{create_kernel_source(filepath)},
-                                       program_{build_program()} {}
+    static constexpr int direction_ = static_cast<int>(Direction::ASCENDING);
+
+    Bsort_app(); 
     
-    OpenCL_app(OpenCL_app&&) = delete;
-    OpenCL_app &operator=(OpenCL_app&&) = delete;
-    OpenCL_app(const OpenCL_app&) = delete;
-    OpenCL_app &operator=(const OpenCL_app&) = delete;
+    Bsort_app(Bsort_app&&) = delete;
+    Bsort_app &operator=(Bsort_app&&) = delete;
+    Bsort_app(const Bsort_app&) = delete;
+    Bsort_app &operator=(const Bsort_app&) = delete;
     
     static cl::Platform select_platform();
     static cl::Context get_gpu_context(cl_platform_id);
@@ -50,7 +46,7 @@ public:
     cl::vector<cl::Kernel> get_program_kernels();
 
     size_t get_work_group_size (cl::Kernel& kernel);
-    cl_ulong event_duration (cl::Event& e);  
+    void execute(cl::Kernel& kernel, cl::NDRange& global_size, cl::NDRange& local_size); 
 
     void get_info(); 
 

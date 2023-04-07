@@ -32,40 +32,36 @@ else()
     set(OPENCL_LIBRARIES ${OPENCL_LIBRARIES} OpenCL::HeadersCpp)
 endif()
 
+if(NOT BUILD_TYPE)
+	set(BUILD_TYPE RELEASE)
+endif()
 
-set (
-FLAGS
--Wall
--Wextra
--Wpedantic
--Werror
--O2
-)
-
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/kernels DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-
-add_compile_options(${FLAGS})
+if ( "${BUILD_TYPE}" STREQUAL "DEBUG")
+    set (OPTIONS -Wall -Wextra -Wpedantic -Werror -DDEBUG_MODE=1)
+else ()
+    set (OPTIONS -Wall -Wextra -Wpedantic -Werror -O3)
+endif ()
+add_compile_options(${OPTIONS})
 
 #libs
-add_library(bitonic_sort source/bitonic_sort.cpp)
-target_include_directories(bitonic_sort PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${OPENCL_INCLUDE_DIR})
-target_link_libraries(bitonic_sort PRIVATE ${OPENCL_LIBRARIES})
-target_compile_features(bitonic_sort PRIVATE cxx_std_20)
+add_subdirectory(Bsort)
 
 #apps
-add_executable (bitonic_run apps/bitonic_run.cpp)
-target_include_directories(bitonic_run PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${OPENCL_INCLUDE_DIR})
-target_link_libraries(bitonic_run PRIVATE ${OPENCL_LIBRARIES})
-target_link_libraries(bitonic_run PRIVATE bitonic_sort)
-target_compile_features(bitonic_run PRIVATE cxx_std_20)
+find_package(Boost COMPONENTS program_options REQUIRED)
+
+add_executable (Bsort_run apps/Bsort_run.cpp)
+target_include_directories (Bsort_run PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${OPENCL_INCLUDE_DIR} ${Boost_INCLUDE_DIR})
+target_link_libraries (Bsort_run PRIVATE ${OPENCL_LIBRARIES} ${Boost_LIBRARIES} tbb)
+target_link_libraries (Bsort_run PRIVATE Bsort)
+target_compile_features (Bsort_run PRIVATE cxx_std_20)
 
 #tests
 enable_testing()
 find_package (GTest REQUIRED)
 
-add_executable(bitonic_test tests/bitonic_test.cpp)
-target_include_directories(bitonic_test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${OPENCL_INCLUDE_DIR})
-target_link_libraries (bitonic_test PRIVATE ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} pthread)
-target_link_libraries(bitonic_test PRIVATE ${OPENCL_LIBRARIES})
-target_link_libraries(bitonic_test PRIVATE bitonic_sort)
-target_compile_features(bitonic_test PRIVATE cxx_std_20)
+add_executable (Bsort_test tests/Bsort_test.cpp)
+target_include_directories (Bsort_test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${OPENCL_INCLUDE_DIR} ${Boost_INCLUDE_DIR}/program_options)
+target_link_libraries (Bsort_test PRIVATE ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} pthread)
+target_link_libraries (Bsort_test PRIVATE ${OPENCL_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries (Bsort_test PRIVATE Bsort)
+target_compile_features (Bsort_test PRIVATE cxx_std_20)
