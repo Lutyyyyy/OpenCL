@@ -36,7 +36,7 @@ if(NOT BUILD_TYPE)
 	set(BUILD_TYPE RELEASE)
 endif()
 
-if ( "${BUILD_TYPE}" STREQUAL "DEBUG")
+if ("${BUILD_TYPE}" STREQUAL "DEBUG")
     set (OPTIONS -Wall -Wextra -Wpedantic -Werror -DDEBUG_MODE=1)
 else ()
     set (OPTIONS -Wall -Wextra -Wpedantic -Werror -O3)

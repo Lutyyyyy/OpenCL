@@ -76,26 +76,13 @@ int main (int argc, char* argv[]) try {
         }
         std::cout << std::endl;
 
-        if (options.check_flag()) {
-            #ifdef DEBUG_MODE                                 
-                #define error_file log_file
-            #else
-                std::ofstream error_file("check.txt", std::ios::trunc);
-            #endif
-
-            error_file << "CHECK flag enabled\nChecking started\n";
-
+        if (options.check_flag()) {          
             if ( std::is_sorted(vec_copy.begin(), vec_copy.end()) == false ) { 
-                error_file << "vector is sorted wrongly\n";
+                std::cout << "vector is sorted incorrectly\n";
             }
             else { 
-                error_file << "Checking ended without errors\n";
-                std::cout << "GPU sorted correctly\n\n"; 
+                std::cout << "GPU sorted correctly\n"; 
             }
-            
-            #ifndef DEBUG_MODE 
-                error_file.close();
-            #endif
         }
 
         if (options.profiling_flag()) {
