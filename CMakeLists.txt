@@ -33,16 +33,19 @@ else()
 endif()
 
 
+set (OPTIONS -Wall -Wextra -Wpedantic -Werror -DBITONIC_PATH=\"${CMAKE_CURRENT_SOURCE_DIR}/Bsort/Bsort.cl\")
+add_compile_options(${OPTIONS})
+
+
 if(NOT BUILD_TYPE)
 	set(BUILD_TYPE RELEASE)
 endif()
 
 if ("${BUILD_TYPE}" STREQUAL "DEBUG")
-    set (OPTIONS -Wall -Wextra -Wpedantic -Werror -DDEBUG_MODE)
-else ()
-    set (OPTIONS -Wall -Wextra -Wpedantic -Werror -O3)
-endif ()
-add_compile_options(${OPTIONS})
+    add_compile_options(-DDEBUG_MODE)
+else()
+    add_compile_options(-O3)
+endif()
 
 
 #libs

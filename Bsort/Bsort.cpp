@@ -8,14 +8,14 @@
 #define BSORT_MERGE        "bsort_merge"
 #define BSORT_MERGE_LAST   "bsort_merge_last"
 
-
-opencl::Bsort_app::Bsort_app() : platform_{select_platform()}, 
-                                                     context_{get_gpu_context(platform_())},
-                                                     device_{select_device()},
-                                                     queue_{context_, device_, cl::QueueProperties::Profiling | 
-                                                                               cl::QueueProperties::OutOfOrder},
-                                                     kernel_source_{create_kernel_source("../Bsort/Bsort.cl")},
-                                                     program_{build_program()} {}
+opencl::Bsort_app::Bsort_app() : 
+                                platform_{select_platform()}, 
+                                context_{get_gpu_context(platform_())},
+                                device_{select_device()},
+                                queue_{context_, device_, cl::QueueProperties::Profiling | 
+                                                        cl::QueueProperties::OutOfOrder},
+                                kernel_source_{create_kernel_source(BITONIC_PATH)},
+                                program_{build_program()} {}
 
 cl::Platform opencl::Bsort_app::select_platform() {
     cl::vector<cl::Platform> platforms;

@@ -14,13 +14,13 @@ std::vector<float> generate_bitonic_sequence      (size_t size);
 
 bool test_generated_sequence (std::vector<float> (*generator)(size_t), size_t size = DEFAULT_SIZE) {
     std::vector<float> vector = generator(size);
-    opencl::Bsort_app app{};
+    opencl::Bsort_app app;
     app.bitonic_sort(vector);
     return std::is_sorted(vector.begin(), vector.end());   
 }
 
 bool test_sequence (std::vector<float>& vector) {
-    opencl::Bsort_app app{};
+    opencl::Bsort_app app;
     app.bitonic_sort(vector);
     return std::is_sorted(vector.begin(), vector.end());   
 }

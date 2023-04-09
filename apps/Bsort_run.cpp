@@ -52,7 +52,7 @@ int main (int argc, char* argv[]) try {
         return EXIT_SUCCESS;
     }
     else if (status == Command_line_options::Return_status::OPTS_SUCCESS)  {
-        opencl::Bsort_app app{};
+        opencl::Bsort_app app;
         LOG("app successfully created")
         if (options.device_info_flag()) {
             app.get_info();

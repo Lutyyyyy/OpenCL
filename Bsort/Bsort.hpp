@@ -12,6 +12,10 @@
 
 #include "CL/opencl.hpp"
 
+#ifndef BITONIC_PATH
+    #define BITONIC_PATH "../Bsort/Bsort.cl"
+#endif
+
 namespace opencl
 {
 
